@@ -41,7 +41,7 @@ const formData = reactive({
   seq: 0,
   img: "",
   parentId: 0
-
+  
 })
 
 const rules = reactive({
@@ -65,7 +65,7 @@ onMounted(() => {
 
 const CallcategoryApi = () => {
   categoryApi.select.call().then((res: any) => {
-    // console.log(res);
+    console.log("res==",res);
     //获取，名称和id值  对应的是列表里面的value和label
     res.item.forEach((item: any) => {
       item.value = item.id

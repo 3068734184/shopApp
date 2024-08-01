@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-    <div>
+    <div style="margin-left: 10px;">
         <el-form :inline="true" :model="formData" class="demo-form-inline">
             <el-form-item label="类目编号">
                 <el-input v-model="formData.id" placeholder="请输入类目ID" clearable />
@@ -14,17 +14,17 @@
         </el-form>
         <!--展示列表-->
         <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="id" label="编号" width="90" />
-            <el-table-column prop="name" label="类目名称" width="120" />
-            <el-table-column prop="img" label="类目图片" width="120">
+            <el-table-column prop="id" label="编号" />
+            <el-table-column prop="name" label="类目名称" />
+            <el-table-column prop="img" label="类目图片">
                 <template #default="scope">
                     <img :src="scope.row.img" style="width:80px;">
                 </template>
             </el-table-column>
-            <el-table-column prop="seq" label="排序" width="120" />
-            <el-table-column prop="parentId" label="父类的ID" width="90" />
-            <el-table-column prop="status" label="状态码" width="120" />
-            <el-table-column fixed="right" label="操作  " min-width="160">
+            <el-table-column prop="seq" label="排序"/>
+            <el-table-column prop="parentId" label="父类的ID" />
+            <el-table-column prop="status" label="状态码" />
+            <el-table-column fixed="right" label="操作" >
                 <template #default="scope">
                     <el-button type="danger" size="small" @click="OfflineClick(scope.row)">
                         下线
@@ -33,7 +33,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination :page-size="pageData.pageSize" layout="total, prev, pager, next" :total="pageData.total"
+        <el-pagination style="display: flex; justify-content: center; margin-top: 20px;" :page-size="pageData.pageSize" layout="prev, pager, next" :total="pageData.total"
             @current-change="currentChange" />
     </div>
 </template>

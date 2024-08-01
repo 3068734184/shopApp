@@ -48,6 +48,32 @@ const route = [
             }
         ]
     },
+    {
+        path: '/product',
+        name: 'product',
+        component: () => import("../views/product/Index.vue"),
+        meta: { title: "产品管理", show: true, icon: "Memo"},
+        children: [
+            {
+                path: "/product/list",
+                name: "product-list",
+                component: () => import("../views/product/List.vue"),
+                 meta: { title: "产品列表", show: true, icon: "List" },
+            },
+            {
+                path: "/product/add",
+                name: "product-add",
+                component: () => import("../views/product/Add.vue"),
+                meta: { title: "产品添加", show: true, icon: "Plus" },
+            },
+            {
+                path: "/product/edit",
+                name: "product-edit",
+                component: () => import("../views/product/Edit.vue"),
+                meta: { title: "产品修改", show: false, icon: "Edit" },
+            }
+        ]
+    },
 
 
 

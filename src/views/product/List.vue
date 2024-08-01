@@ -1,6 +1,6 @@
 <!-- productList -->
 <template>
-    <div>
+    <div style="margin-left: 10px;">
         <el-form :inline="true" :model="formData" class="demo-form-inline">
             <el-form-item label="产品编号">
                 <el-input v-model="formData.id" placeholder="请输入产品ID" clearable />
@@ -14,17 +14,23 @@
         </el-form>
         <!--展示列表-->
         <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="id" label="编号" width="90" />
-            <el-table-column prop="name" label="产品名称" width="120" />
-            <el-table-column prop="img" label="产品图片" width="120">
+            <el-table-column prop="id" label="编号"/>
+            <el-table-column prop="name" label="产品名称"  />
+            <el-table-column prop="img" label="产品图片" >
                 <template #default="scope">
                     <img :src="scope.row.img" style="width:80px;">
                 </template>
             </el-table-column>
-            <el-table-column prop="seq" label="排序" width="120" />
-            <el-table-column prop="parentId" label="分类的ID" width="90" />
-            <el-table-column prop="status" label="状态码" width="120" />
-            <el-table-column fixed="right" label="操作  " min-width="160">
+            <el-table-column prop="categoryId" label="分类ID"></el-table-column>
+            <el-table-column prop="status" label="状态码" />
+            <el-table-column prop="seq" label="排序" />
+            <el-table-column prop="price" label="价格">
+                <template #default="scope">
+                    {{ scope.row.price }}万
+                </template>
+            </el-table-column>
+            <el-table-column prop="brief" label="简介"></el-table-column>
+            <el-table-column fixed="right" label="操作">
                 <template #default="scope">
                     <el-button type="danger" size="small" @click="OfflineClick(scope.row)">
                         下线
@@ -33,7 +39,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination :page-size="pageData.pageSize" layout="total, prev, pager, next" :total="pageData.total"
+        <el-pagination style="display: flex; justify-content: center; margin-top: 20px;" size="large" :page-size="pageData.pageSize" layout="prev, pager, next" :total="pageData.total"
             @current-change="currentChange" />
     </div>
 </template>
@@ -59,19 +65,22 @@ const pageData = reactive({
 const tableData = ref()
 
 onMounted(() => {
-    callCategoryApi()
+    callProductApi()
 })
 
 //定义函数进行数据回调
-const callCategoryApi = () => {
+const callProductApi = () => {
     let id = formData.id === '' ? undefined : formData.id
     let name = formData.name === '' ? undefined : formData.name
+
+    // console.log("id==",id);
+
     productApi.select.call({
         id: id, name: name,
         pageNum: pageData.pageNum,
         pageSize: pageData.pageSize
     }).then((res: any) => {
-        console.log(res);
+        // console.log("callProductApi==",res);
         // console.log(res.data);
         tableData.value = res.item;
         pageData.total = res.total
@@ -82,23 +91,23 @@ const callCategoryApi = () => {
 
 const onSubmit = () => {
     console.log('submit!')
-    callCategoryApi()
+    callProductApi()
 }
 const currentChange = (num: number) => {
     // console.log(`current page: ${num}`)
     pageData.pageNum = num
-    console.log(pageData);
-    callCategoryApi()
+    // console.log("pageData==", pageData);
+    callProductApi()
 }
 
 //修改
 const EditClick = (row: any) => {
-    router.push({ name: 'category-edit', query: { id: row.id } })
+    router.push({ name: 'product-edit', query: { id: row.id } })
 }
 //下线
 const OfflineClick = (row: any) => {
     ElMessageBox.confirm(
-        '您确定要对名称为 ' + row.name + ' 的类目进行下线吗？',
+        '您确定要对名称为 ' + row.name + ' 的产品进行下线吗？',
         '警告',
         {
             confirmButtonText: '确认',
@@ -115,7 +124,7 @@ const OfflineClick = (row: any) => {
                     message: '下线成功',
                 })
                 //回调函数刷新当前页面
-                callCategoryApi()
+                callProductApi()
             })
 
         })
@@ -128,4 +137,16 @@ const OfflineClick = (row: any) => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.demo-form-inline {
+    margin-top: 20px;
+}
+
+.demo-form-inline .el-input {
+    --el-input-width: 220px;
+}
+
+.demo-form-inline .el-select {
+    --el-select-width: 220px;
+}
+</style>

@@ -12,7 +12,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { weatherWidget } from '../../utils/weatherWidget';
+import { weatherWidget } from '@/utils/weatherWidget';
 const value = ref(new Date())
 
 onMounted(() => {
@@ -41,7 +41,15 @@ onMounted(() => {
     position: unset !important;
 }
 
+:global(.gTyFGf) {
+    width: 650px !important;
+    margin: 0 auto;
+}
 :global(.ihAeOA) {
+    width: 650px !important;
+    margin: 0 auto;
+}
+:global(.gEPbpr) {
     width: 650px !important;
     margin: 0 auto;
 }

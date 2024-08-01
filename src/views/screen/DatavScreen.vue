@@ -15,15 +15,19 @@
             <!-- 折柱图 -->
             <div id="hisAndPoly" style="width: 100%; height: 340px;"></div>
         </el-col>
+        <el-col :span="12">
+            <div id="hisAndPoly2" style="width: 100%; height: 340px;"></div>
+        </el-col>
     </el-row>
 </template>
 <script setup lang="ts">
 import * as echarts from 'echarts';
 import { onMounted } from 'vue';
-import { categoryProApi } from '../../api'
+import { categoryProApi,productScreenApi } from '../../api'
 
 onMounted(() => {
     CallCategoryProApi();
+    CallProductScreenApi();
 })
 
 const initPieCart = (data: any) => {
@@ -129,7 +133,71 @@ const initHisAndPoly = (xData: any, yData: any) => {
     option && myChart.setOption(option);
 }
 
-const initPie2Chart = (data:any) => {
+const initHisAndPoly2 = (xData: any, yData: any) => {
+    var chartDom = document.getElementById('hisAndPoly2');
+    var myChart = echarts.init(chartDom);
+    var option;
+
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: { show: true, readOnly: false },
+                magicType: { show: true, type: ['line', 'bar'] },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        legend: {
+            data: ['类别库存']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: xData,
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: 'Stock',
+                min: 0,
+                max: 100,
+                interval: 10,
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '类别库存',
+                type: 'bar',
+                tooltip: {
+                    valueFormatter: function (value:any) {
+                        return value;
+                    }
+                },
+                data:yData
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);
+}
+
+const initPie2Chart = (data: any) => {
     var chartDom = document.getElementById('pie2Chart');
     var myChart = echarts.init(chartDom);
     var option;
@@ -184,6 +252,17 @@ const CallCategoryProApi = () => {
         initHisAndPoly(xData, yData);
 
         initPie2Chart(res)
+    })
+}
+
+const CallProductScreenApi = () => {
+    productScreenApi.selectScreen.call().then((res: any) => {
+        // console.log("res==",res);
+        
+        const xData = res.map((item: any) => item.categoryName);
+        const yData = res.map((item: any) => item.stock);
+
+        initHisAndPoly2(xData,yData)
     })
 }
 </script>
