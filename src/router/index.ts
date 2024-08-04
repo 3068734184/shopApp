@@ -1,19 +1,46 @@
 import { createRouter, createWebHistory } from "vue-router"
 
 const route = [
-    
+
     {
-    path: '/',
-    name: 'home',
+        path: '/',
+        name: 'home',
         component: () => import("../views/Home.vue"),
-        meta: { title: "首页", show: true, icon:"House",useFrame:true}
-    
+        meta: { title: "首页", show: true, icon: "House", useFrame: true }
+
     },
     {
         path: '/moveshow',
         name: 'moveshow',
         component: () => import("../views/MoveShow.vue"),
-        meta: { title: "移动首页", show: false, icon: "House", useFrame: false }
+        meta: { title: "移动首页", show: false, icon: "House", useFrame: false },
+        children: [
+            {
+                path: "/moveshow/index",
+                name: "moveshow-index",
+                component: () => import("../views/moblie/Index.vue"),
+            },
+            {
+                path: "/moveshow/list",
+                name: "moveshow-list",
+                component: () => import("../views/moblie/List.vue")
+            },
+            {
+                path: "/moveshow/category",
+                name: "moveshow-category",
+                component: () => import("../views/moblie/Category.vue")
+            },
+            {
+                path: "/moveshow/cart",
+                name: "moveshow-cart",
+                component: () => import("../views/moblie/Cart.vue")
+            },
+            {
+                path: "/moveshow/mine",
+                name: "moveshow-mine",
+                component: () => import("../views/moblie/Mine.vue")
+            }
+        ]
     },
     {
         path: '/screen',
@@ -26,13 +53,13 @@ const route = [
         path: '/category',
         name: 'category',
         component: () => import("../views/category/Index.vue"),
-        meta: { title: "类目管理", show: true, icon: "Memo"},
+        meta: { title: "类目管理", show: true, icon: "Memo" },
         children: [
             {
                 path: "/category/list",
                 name: "category-list",
                 component: () => import("../views/category/List.vue"),
-                 meta: { title: "类目列表", show: true, icon: "List" },
+                meta: { title: "类目列表", show: true, icon: "List" },
             },
             {
                 path: "/category/add",
@@ -52,13 +79,13 @@ const route = [
         path: '/product',
         name: 'product',
         component: () => import("../views/product/Index.vue"),
-        meta: { title: "产品管理", show: true, icon: "Memo"},
+        meta: { title: "产品管理", show: true, icon: "Memo" },
         children: [
             {
                 path: "/product/list",
                 name: "product-list",
                 component: () => import("../views/product/List.vue"),
-                 meta: { title: "产品列表", show: true, icon: "List" },
+                meta: { title: "产品列表", show: true, icon: "List" },
             },
             {
                 path: "/product/add",

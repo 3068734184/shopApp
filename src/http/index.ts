@@ -7,6 +7,7 @@ const state = {
 };
 //返回数据规则
 export interface IResponseData<T> {
+    item: any;
     status: number;
     message?: string;
     data: T;
