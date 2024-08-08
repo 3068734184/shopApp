@@ -12,11 +12,14 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { weatherWidget } from '@/utils/weatherWidget';
 const value = ref(new Date())
 
 onMounted(() => {
-    weatherWidget();
+    const script = document.createElement('script');
+    script.src = '../../utils/weatherWidget.js';
+    script.charset = 'utf-8';
+    script.async = true;
+    document.body.appendChild(script);
 });
 </script>
 <style scoped>
@@ -45,11 +48,18 @@ onMounted(() => {
     width: 650px !important;
     margin: 0 auto;
 }
+
 :global(.ihAeOA) {
     width: 650px !important;
     margin: 0 auto;
 }
+
 :global(.gEPbpr) {
+    width: 650px !important;
+    margin: 0 auto;
+}
+
+:global(.hWtwV) {
     width: 650px !important;
     margin: 0 auto;
 }

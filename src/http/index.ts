@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ElLoading, ElMessage } from "element-plus";
 
-const state = {
-    ok: 0,//请求成功状态码
-    401: "ERR_BAD_REQUEST"
-};
+// const state = {
+//     ok: 0,//请求成功状态码
+//     401: "ERR_BAD_REQUEST"
+// };
 //返回数据规则
 export interface IResponseData<T> {
     item: any;

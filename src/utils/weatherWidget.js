@@ -34,5 +34,5 @@ window.SeniverseWeatherWidget('show', {
 
 
 export function weatherWidget() {
-  // console.log("This is a utility function");
+
 }

@@ -58,7 +58,7 @@ const formData = reactive({
 const rules = reactive({
   name: [
     { required: true, message: '请输入类目的名称', trigger: 'blur' },
-    { min: 2, max: 10, message: '类目名称不得小于2 大于10', trigger: 'blur' },
+    { min: 2, max: 15, message: '类目名称不得小于2 大于15', trigger: 'blur' },
   ],
 })
 

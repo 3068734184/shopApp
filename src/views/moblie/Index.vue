@@ -41,7 +41,6 @@
                     <img :src="image" width="100%" />
                 </van-swipe-item>
             </van-swipe>
-
         </div>
 
         <div class="flash-sale">
