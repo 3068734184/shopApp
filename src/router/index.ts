@@ -38,6 +38,16 @@ const route = [
                 path: "/moveshow/mine",
                 name: "moveshow-mine",
                 component: () => import("../views/moblie/Mine.vue")
+            },
+            {
+                path: "/moveshow/login",
+                name: "moveshow-login",
+                component: () => import("../views/moblie/Login.vue")
+            },
+            {
+                path: "/moveshow/goodsDetail",
+                name: "moveshow-goodsDetail",
+                component: () => import("../views/moblie/GoodsDetail.vue")
             }
         ]
     },

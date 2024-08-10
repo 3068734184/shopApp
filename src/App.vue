@@ -77,4 +77,12 @@ import Menu from './components/Menu.vue'
   color: rgb(32, 32, 32);
 }
 
+:global(.van-search__content) {
+  border-radius: 20px !important;
+}
+
+:global(.van-nav-bar .van-icon) {
+  color: #60626c !important;
+  font-size: 20px !important;
+}
 </style>

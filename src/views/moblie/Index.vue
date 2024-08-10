@@ -6,10 +6,10 @@
             <van-search show-action v-model="searchInfo" shape="round" background="#ff5454" placeholder="请输入搜索关键词"
                 @search="onSearch">
                 <template #left>
-                    <van-icon name="bars" color="#ffe4e4" style="margin-right: 10px;" />
+                    <van-icon name="bars" color="#ffe4e4" style="margin-right: 10px;" @click="toCategory" />
                 </template>
                 <template #action>
-                    <van-icon name="contact-o" color="#ffe4e4" />
+                    <van-icon name="contact-o" color="#ffe4e4" @click="toLogin" />
                 </template>
             </van-search>
             <van-divider :style="{ color: '#ff8383', borderColor: '#ff8383', padding: '0', margin: '0' }" />
@@ -179,12 +179,19 @@ onMounted(() => {
 const getBannerImages = () => {
     productScreenApi.bannerImages.call().then((res) => {
         // console.log("res==", res);
-        bannerImages.value = res
+        bannerImages.value = res.data
         // console.log(bannerImages.value);
         
     })
 }
 
+const toLogin = () =>{
+    router.push({path:"/moveshow/login"})
+}
+
+const toCategory = () =>{
+    router.push({path:"/moveshow/category"})
+}
 </script>
 
 <style scoped>

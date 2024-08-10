@@ -9,13 +9,13 @@
     <van-tree-select v-model:main-active-index="activeIndex" :items="items">
       <template #content>
         <div v-for="(item, loopIndex) in items" :key="item.id">
-          <van-row v-if="activeIndex === loopIndex" :gutter="[5, 15]">
+          <van-row style="padding-left: 10px;" v-if="activeIndex === loopIndex" :gutter="[5, 15]">
             <van-col span="8" v-for="subItem in item.subItems" :key="subItem.id">
               <div class="ca-content">
                 <div class="ca-content-img">
                   <img :src="subItem.imgUrl" alt="" class="trao-image">
                 </div>
-                <div class="ca-content-name">{{ subItem.name }}</div>
+                <div class="ca-content-name">{{ subItem.text }}</div>
               </div>
             </van-col>
           </van-row>
@@ -26,8 +26,9 @@
 </template>
 
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { categoryApi } from '../../api';
 
 // 返回键
 const router = useRouter()
@@ -45,41 +46,23 @@ const onSearch = (value: any) => {
 const activeIndex = ref(0);
 
 
-const items = [
-  {
-    id: 1,
-    text: '食品',
-    subItems: [
-      { id: 1, name: '糖果', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/215072/20/30644/9019/646da7a1F63613a8c/a5b2428860e14917.jpg' },
-      { id: 2, name: '糖果', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/215072/20/30644/9019/646da7a1F63613a8c/a5b2428860e14917.jpg' },
-      { id: 3, name: '糖果', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/215072/20/30644/9019/646da7a1F63613a8c/a5b2428860e14917.jpg' },
-      { id: 4, name: '糖果', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/215072/20/30644/9019/646da7a1F63613a8c/a5b2428860e14917.jpg' },
-      { id: 5, name: '糖果', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/215072/20/30644/9019/646da7a1F63613a8c/a5b2428860e14917.jpg' },
-      { id: 6, name: '糖果', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/215072/20/30644/9019/646da7a1F63613a8c/a5b2428860e14917.jpg' },
-      // 其他食品项
-    ]
-  },
-  {
-    id: 2,
-    text: '电器',
-    subItems: [
-      { id: 1, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 2, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 3, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 4, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 5, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 6, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 7, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 8, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      { id: 9, name: '炒菜机器人', imgUrl: 'https://m.360buyimg.com/babel/jfs/t1/92370/3/40455/5787/646dd448Fb4a0ed9f/6d95d4dab252795f.jpg' },
-      // 其他电器项
-    ]
-  }
-]
+const items = ref()
+
+const getItems = () => {
+  categoryApi.MSelect.call().then((res) => {
+    // console.log("res=>",res);
+    items.value = res.data
+  })
+}
+
+onMounted(() => {
+  getItems()
+})
 </script>
 
 <style scoped>
 .ca-content-img {
+  display: flex;
   width: 3.34rem;
   height: 3.34rem;
 }

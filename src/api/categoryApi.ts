@@ -36,6 +36,13 @@ export default {
         call: async function (params: any = {}) {
             return await http.delete(this.url, params)
         }
+    },
+    MSelect:{
+        name:"移动端分类",
+        url:"/api/category/MSelect",
+        call:async function () {
+            return await http.get(this.url)
+        }
     }
 
 

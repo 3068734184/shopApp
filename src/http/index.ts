@@ -9,9 +9,10 @@ import { ElLoading, ElMessage } from "element-plus";
 export interface IResponseData<T> {
     item: any;
     status: number;
-    message?: string;
+    message: string;
     data: T;
     code: string;
+    token:any;
 }
 
 //请求默认配置规则
@@ -59,12 +60,12 @@ class Http {
                     //如果没有返回状态码，直接返回数据，针对于返回数据为blob类型    
                     return response;
                 } else if (code !== 0) {
-                    ElMessage.error(mydata.message);
-                    return Promise.reject(mydata);
+                    // ElMessage.error(mydata.message);
+                    return mydata;
                 }
                  code == 0 //的时候，提取我们只关注的Api数据data
                 //console.log(mydata.data);
-                return mydata.data;
+                return mydata;
             },
 
         );
