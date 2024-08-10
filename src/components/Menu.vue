@@ -2,7 +2,7 @@
   <!-- {{ $router.options.routes }} -->
   <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu-vertical-demo"
     :default-active="$route.path" text-color="#fff" :router="true">
-    <template v-for="(item, index) in $router.options.routes">
+    <template v-for="item in $router.options.routes">
       <el-menu-item :index="item.path" v-if="item.children === undefined && item.meta ? item.meta.show == true : ''">
         <component :is="item.meta ? item.meta.icon : ''" style="width: 20px; height: 20px; margin-right: 5px;"></component>
         <span>{{ item.meta ? item.meta.title : '' }}</span>

@@ -46,9 +46,9 @@ const rules = reactive({
     ]
 })
 
-const submitForm = async (formEl) => {
+const submitForm = async (formEl:any) => {
     if (!formEl) return
-    await formEl.validate((valid, fields) => {
+    await formEl.validate((valid:any, fields:any) => {
         if (valid) {
             console.log('submit!')
         } else {
@@ -57,7 +57,7 @@ const submitForm = async (formEl) => {
     })
 }
 
-const resetForm = (formEl) => {
+const resetForm = (formEl:any) => {
     if (!formEl) return
     formEl.resetFields()
 }
