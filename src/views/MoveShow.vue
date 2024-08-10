@@ -20,7 +20,7 @@ const toggleTabBar = (show: boolean) => {
     showTabBar.value = show
 }
 
-provide('toggleTabBar',toggleTabBar)
+provide('toggleTabBar', toggleTabBar)
 </script>
 
 <style scoped>

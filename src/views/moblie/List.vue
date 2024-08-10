@@ -62,12 +62,19 @@ const onSearch = () => {
     searchProduct()
 }
 
+interface Response {
+    token?: string; // 使用可选属性来表示token可能不存在
+    message: string; // 假设message总是存在的
+    item? : any;
+}
+
 const searchProduct = () => {
     productApi.select.call({
         name: searchInfo.value
     }).then((res) => {
         // console.log("res==", res);
-        listData.value = res.item
+        const data = res.data as Response;
+        listData.value = data.item
     })
 }
 
