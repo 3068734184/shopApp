@@ -19,6 +19,10 @@ public class ProductService {
         return productDao.select(productQuery);
     }
 
+    public Product selectProductById(Integer id) {
+        return productDao.selectById(id);
+    }
+
     public int insertProduct(Product product) {
         return productDao.insetProduct(product);
     }

@@ -1,11 +1,13 @@
 package com.example.shopmodel.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Product {
     private Integer id;
     private String name;
