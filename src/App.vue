@@ -83,6 +83,7 @@ import Menu from './components/Menu.vue'
 
 :global(.van-nav-bar .van-icon) {
   color: #60626c !important;
-  font-size: 20px !important;
+  font-size: 25px !important;
+  font-weight: 500;
 }
 </style>

@@ -9,6 +9,8 @@ import 'vant/lib/index.css';
 import ElementPlus from 'element-plus'
 //4引入路由配置
 import router from './router'
+// 5.引入pinia状态管理工具
+import pinia from './store';
 
 //国际化标准
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
@@ -28,5 +30,6 @@ app.use(ElementPlus,{
     locale: zhCn,
 })
 app.use(router)
+app.use(pinia)
 app.use(vant)
 app.mount('#app')

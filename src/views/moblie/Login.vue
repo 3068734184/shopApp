@@ -54,7 +54,7 @@ import { showFailToast } from 'vant';
 // 返回键
 const router = useRouter()
 const onClickLeft = () => {
-    router.push({ path: "/moveshow/index" })
+    router.go(-1)
 }
 
 const ltel = ref('');
@@ -110,6 +110,7 @@ const registerSubmit = (values: any) => {
                 if (data === null) {
                     showFailToast(res.message)
                 } else {
+                    sessionStorage.setItem("username", data.username);
                     router.push({ path: "/moveshow/mine" })
                 }
             })

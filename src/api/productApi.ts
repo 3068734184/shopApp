@@ -8,6 +8,13 @@ export default {
             return await http.get(this.url, params)
         }
     },
+    selectById: {
+        name: "根据id查询",
+        url: "/api/product/byId",
+        call: async function (params: any = {}) {
+            return await http.get(this.url, params)
+        }
+    },
     insert: {
         name: "新增产品",
         url: "/api/product",

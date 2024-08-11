@@ -16,14 +16,16 @@
         </van-sticky>
 
         <div class="search-list" style="padding-top: 10px;">
-            <van-card v-for="(item, index) in listData" :key="index" :title="item.name" :thumb="item.img">
-                <template #price>
-                    ￥{{ item.price }}万
-                </template>
-                <template #tags>
-                    <van-tag plain type="primary">{{ item.brief }}</van-tag>
-                </template>
-            </van-card>
+            <a v-for="(item,index) in listData" :key="index" :href="`/moveshow/goodsDetail/${item.id}`">
+                <van-card :title="item.name" :thumb="item.img">
+                    <template #price>
+                        ￥{{ item.price }}万
+                    </template>
+                    <template #tags>
+                        <van-tag plain type="primary">{{ item.brief }}</van-tag>
+                    </template>
+                </van-card>
+            </a>
         </div>
     </div>
 </template>
@@ -65,7 +67,7 @@ const onSearch = () => {
 interface Response {
     token?: string; // 使用可选属性来表示token可能不存在
     message: string; // 假设message总是存在的
-    item? : any;
+    item?: any;
 }
 
 const searchProduct = () => {

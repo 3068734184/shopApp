@@ -1,12 +1,12 @@
 <!-- goodsDetail -->
 <template>
     <div>
+        <van-floating-bubble icon="arrow-left" @click="floatClick" />
+
         <van-swipe>
             <van-swipe-item v-for="i in 4" :key="i">
                 <div class="goods-banner-img">
-                    <img style="width: 100%;"
-                        src="https://m.360buyimg.com/mobilecms/s843x843_jfs/t1/3874/19/23294/64685/66b4469dF07603990/a106c38ed9055c8b.jpg!q70.dpg.webp"
-                        alt="">
+                    <img style="width: 100%;" :src="goodsDetail.img" alt="">
                 </div>
             </van-swipe-item>
             <template #indicator="{ active, total }">
@@ -19,20 +19,14 @@
                 <div class="price-wrap">
                     <span class="price">
                         <span style="margin-right: 2px; font-size: 12px; color: inherit;">到手价</span>
-                        ￥<em>79</em>
-                        <span class="price-demicals">.00</span>
-                    </span>
-                    <span class="orgin-price">
-                        <span class="price-crossout"
-                            style="position: relative; display: inline-block; vertical-align: middle; margin-right: 5px;"></span>
-                        ￥<em>109</em>
+                        ￥<em>{{ goodsDetail.price }}</em>
                         <span class="price-demicals">.00</span>
                     </span>
                 </div>
             </div>
             <div class="fn-wrap">
                 <div class="fn-goods-name">
-                    <span>弱水时砂甲虫真无线耳机半入耳游戏电竞吃鸡超长续航蓝牙5.3耳机 HiFi高音质 运动跑步 通话降噪 月银-新版</span>
+                    <span>{{ goodsDetail.name }}</span>
                 </div>
             </div>
             <div class="favFloor">
@@ -65,38 +59,109 @@
         <!-- 优惠楼层 -->
         <div class="item-floor">
             <!-- 优惠券单元格 -->
-            <van-cell-group inset>
-                <van-coupon-cell :coupons="coupons" :chosen-coupon="chosenCoupon" @click="showList = true" />
-            </van-cell-group>
+            <van-coupon-cell :coupons="coupons" :chosen-coupon="chosenCoupon" @click="showList = true" />
             <!-- 优惠券列表 -->
             <van-popup v-model:show="showList" round position="bottom" style="height: 60%; padding-top: 4px;">
                 <van-coupon-list :coupons="coupons" :chosen-coupon="chosenCoupon" :disabled-coupons="disabledCoupons"
                     @change="onChange" @exchange="onExchange" />
             </van-popup>
 
+
         </div>
         <!-- sku楼层 -->
-        <div class="item-floor">
+        <div class="item-floor" style="height: 250px;">
             <van-cell-group inset>
-                <van-cell is-link arrow-direction="down" @click="show = true" >
+                <van-cell is-link arrow-direction="down">
                     <!-- 使用 title 插槽来自定义标题 -->
                     <template #title>
                         <span class="custom-title">已选</span>
-                        <span>月银-新版，1个</span>
+                        <span>{{ goodsDetail.brief }}，1辆</span>
                     </template>
                 </van-cell>
             </van-cell-group>
-            <van-action-sheet v-model:show="show" title="标题" style="height: 60%;">
+            <van-action-sheet v-model:show="showSku" title="标题" style="height: 60%;">
                 <div class="content">内容</div>
+            </van-action-sheet>
+            <van-cell-group inset>
+                <van-cell is-link arrow-direction="down" @click="showAddr = true"
+                    label="现在下单，承诺8月12日24:00前发货，预计8月15日24:00前送达">
+                    <!-- 使用 title 插槽来自定义标题 -->
+                    <template #title>
+                        <span class="custom-title">送至</span>
+                        <span>北京朝阳区三环到四环之间</span>
+                    </template>
+                </van-cell>
+                <van-cell>
+                    <!-- 使用 title 插槽来自定义标题 -->
+                    <template #title>
+                        <span class="custom-title">运费</span>
+                        <span>包邮（请以提交订单时为准）</span>
+                    </template>
+                </van-cell>
+            </van-cell-group>
+            <van-action-sheet v-model:show="showAddr" title="配送至" style="height: 60%;">
+                <van-address-list v-model="chosenAddressId" :list="list" :disabled-list="disabledList"
+                    disabled-text="以下地址超出配送范围" default-tag-text="默认" @add="onAdd" @edit="onEdit" />
             </van-action-sheet>
         </div>
 
+        <van-action-bar>
+            <van-action-bar-icon icon="shop-o" text="店铺" />
+            <van-action-bar-icon icon="chat-o" text="客服" />
+            <van-action-bar-icon icon="cart-o" text="购物车" />
+            <van-action-bar-button type="warning" text="加入购物车" />
+            <van-action-bar-button type="danger" text="立即购买" />
+        </van-action-bar>
     </div>
 </template>
 
 <script setup lang='ts'>
-import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import { inject, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { productApi } from '../../api';
 
+const route = useRoute()
+const router = useRouter()
+
+const floatClick = () => {
+    router.go(-1)
+}
+
+const productId = ref(route.params.id)
+
+onMounted(() => {
+    getProductDetail()
+})
+
+const goodsDetail = reactive({
+    name: '',
+    price: 0,
+    img: '',
+    brief: ''
+})
+
+interface goodsDetailResponse {
+    name: string,
+    price: number,
+    img: string,
+    brief: string
+}
+const getProductDetail = () => {
+    productApi.selectById.call({
+        id: productId.value
+    }).then((res) => {
+        // console.log("res=>", res);
+        const items = res.data as goodsDetailResponse
+        goodsDetail.name = items.name
+        goodsDetail.price = items.price
+        goodsDetail.img = items.img
+        goodsDetail.brief = items.brief
+
+    })
+}
+
+
+// 隐藏底部导航
 const toggleTabBar = inject<((show: boolean) => void)>('toggleTabBar');
 if (toggleTabBar) {
     onMounted(() => {
@@ -124,6 +189,7 @@ const coupon = {
 const coupons = ref([coupon]);
 const showList = ref(false);
 const chosenCoupon = ref(-1);
+const disabledCoupons = ref([coupon]);
 
 const onChange = (index: any) => {
     showList.value = false;
@@ -134,12 +200,59 @@ const onExchange = (code: any) => {
 };
 
 // sku楼层相关
-const show = ref(false);
+const showSku = ref(false);
+const showAddr = ref(false);
+
+// 地址相关
+const chosenAddressId = ref('1');
+const list = [
+    {
+        id: '1',
+        name: '张三',
+        tel: '13000000000',
+        address: '浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室',
+        isDefault: true,
+    },
+    {
+        id: '2',
+        name: '李四',
+        tel: '1310000000',
+        address: '浙江省杭州市拱墅区莫干山路 50 号',
+    },
+];
+const disabledList = [
+    {
+        id: '3',
+        name: '王五',
+        tel: '1320000000',
+        address: '浙江省杭州市滨江区江南大道 15 号',
+    },
+];
+
+const onAdd = () => console.log('新增地址');
+const onEdit = (item: any, index: any) => console.log('编辑地址:' + index);
+
+
 </script>
 
 <style scoped>
 :global(body) {
     background-color: #f7f8fa00;
+}
+
+:global(.van-floating-bubble) {
+    transform: translate3d(10px, 10px, 0) !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: #666 !important
+}
+
+:global(.van-floating-bubble__icon) {
+    margin-right: 4px;
+}
+
+:global(.van-cell__label) {
+    margin-left: 40px;
 }
 
 .custom-indicator {
@@ -259,7 +372,7 @@ const show = ref(false);
     background-color: #f7f7f7;
 }
 
-.custom-title{
+.custom-title {
     font-weight: 600;
     margin-right: 10px;
 }
