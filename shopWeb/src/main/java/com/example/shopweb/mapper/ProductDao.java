@@ -10,6 +10,9 @@ public interface ProductDao {
     //分页查询
     Page<Product> select(ProductQuery productQuery);
 
+    @Select("select name,img,price,brief from product where id = #{id} ")
+    Product selectById(Integer id);
+
     @Insert("insert into product (name, categoryId, img, price, brief, lastUpdateBy) values (#{name} ,#{categoryId} " +
             ",#{img} ,#{price} ,#{brief} ,#{lastUpdateBy} );")
     int insetProduct(Product product);
