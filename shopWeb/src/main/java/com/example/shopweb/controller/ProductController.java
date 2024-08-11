@@ -19,6 +19,11 @@ public class ProductController {
         return productService.selectProduct(productQuery);
     }
 
+    @GetMapping("/byId")
+    public Product selectProductById(Integer id) {
+        return productService.selectProductById(id);
+    }
+
     @PostMapping
     public int insertProduct(@RequestBody Product product) {
         return productService.insertProduct(product);
