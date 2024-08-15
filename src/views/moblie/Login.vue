@@ -70,7 +70,8 @@ const validator = (val: any) => /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6}$/.test(val
 interface LoginResponse {
     token?: string;
     message: string;
-    username:string;
+    username: string;
+    id: string;
 }
 
 const loginSubmit = (values: any) => {
@@ -85,7 +86,11 @@ const loginSubmit = (values: any) => {
             showFailToast(res.message || '登录失败，未获取到有效数据');
         } else {
             sessionStorage.setItem("username", data.username);
-            router.push({ path: "/moveshow/mine"});
+            sessionStorage.setItem("tel",values.ltel)
+            sessionStorage.setItem("userId", data.id);
+            sessionStorage.setItem("token",data.token)
+            // console.log("loginRes=>",data);
+            router.push({ path: "/moveshow/mine" });
         }
     }).catch(() => {
         // 处理网络错误或API调用失败的情况

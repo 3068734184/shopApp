@@ -50,8 +50,13 @@ const route = [
                 component: () => import("../views/moblie/GoodsDetail.vue")
             },
             {
-                path: "/moveshow/orderDetail",
-                name: "moveshow-orderDetail",
+                path: "/moveshow/orderConfirm",
+                name: "moveshow-orderConfirm",
+                component: () => import("../views/moblie/OrderConfirm.vue")
+            },
+            {
+                path: "/moveshow/payment",
+                name: "moveshow-payment",
                 component: () => import("../views/moblie/OrderDetail.vue")
             }
         ]

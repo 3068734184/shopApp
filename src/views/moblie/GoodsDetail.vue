@@ -88,7 +88,7 @@
                     <!-- 使用 title 插槽来自定义标题 -->
                     <template #title>
                         <span class="custom-title">送至</span>
-                        <span>北京朝阳区三环到四环之间</span>
+                        <span>{{ deliverTo }}</span>
                     </template>
                 </van-cell>
                 <van-cell>
@@ -101,15 +101,21 @@
             </van-cell-group>
             <van-action-sheet v-model:show="showAddr" title="配送至" style="height: 60%;">
                 <van-address-list v-model="chosenAddressId" :list="list" :disabled-list="disabledList"
-                    disabled-text="以下地址超出配送范围" default-tag-text="默认" @add="onAdd" @edit="onEdit" />
+                    disabled-text="以下地址超出配送范围" default-tag-text="默认" @select="bringAddress" @add="onAdd"
+                    @edit="onEdit" />
             </van-action-sheet>
+            <!-- 地址选择 -->
+            <van-popup v-model:show="showAddressSelect" round position="bottom" :style="{ height: '40%' }">
+                <van-area v-model="checkedAddressCode" title="标题" :area-list="areaList"
+                    :columns-placeholder="['省份', '城市', '区县']" @confirm="addAddress" />
+            </van-popup>
         </div>
 
         <van-action-bar>
             <van-action-bar-icon icon="shop-o" text="店铺" />
             <van-action-bar-icon icon="chat-o" text="客服" />
-            <van-action-bar-icon icon="cart-o" text="购物车" />
-            <van-action-bar-button type="warning" text="加入购物车" />
+            <van-action-bar-icon icon="cart-o" text="购物车" :to="{ path: '/moveshow/cart' }" />
+            <van-action-bar-button type="warning" text="加入购物车" @click="addToCart" />
             <van-action-bar-button type="danger" text="立即购买" />
         </van-action-bar>
     </div>
@@ -118,7 +124,9 @@
 <script setup lang='ts'>
 import { inject, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { productApi } from '../../api';
+import { productApi, addressBook, shoppingCart } from '../../api';
+import { areaList } from '@vant/area-data';
+import { showToast } from 'vant';
 
 const route = useRoute()
 const router = useRouter()
@@ -134,6 +142,7 @@ onMounted(() => {
 })
 
 const goodsDetail = reactive({
+    id: 0,
     name: '',
     price: 0,
     img: '',
@@ -141,10 +150,11 @@ const goodsDetail = reactive({
 })
 
 interface goodsDetailResponse {
-    name: string,
-    price: number,
-    img: string,
-    brief: string
+    id: number;
+    name: string;
+    price: number;
+    img: string;
+    brief: string;
 }
 const getProductDetail = () => {
     productApi.selectById.call({
@@ -158,6 +168,26 @@ const getProductDetail = () => {
         goodsDetail.brief = items.brief
 
     })
+}
+
+
+const addToCart = () => {
+    if (sessionStorage.getItem("userId") == null) {
+        showToast("请先登录")
+    } else {
+        shoppingCart.addShoppingCart.call({
+            product_id: productId.value,
+            user_id: sessionStorage.getItem("userId")
+        }).then((res) => {
+            // console.log(res);
+            if (res.data === 1) {
+                showToast("已添加到购物车🛒")
+            } else {
+                showToast("添加失败")
+            }
+        })
+    }
+
 }
 
 
@@ -195,31 +225,18 @@ const onChange = (index: any) => {
     showList.value = false;
     chosenCoupon.value = index;
 };
-const onExchange = (code: any) => {
+const onExchange = () => {
     coupons.value.push(coupon);
 };
 
 // sku楼层相关
 const showSku = ref(false);
 const showAddr = ref(false);
+const showAddressSelect = ref(false)
 
 // 地址相关
-const chosenAddressId = ref('1');
-const list = [
-    {
-        id: '1',
-        name: '张三',
-        tel: '13000000000',
-        address: '浙江省杭州市西湖区文三路 138 号东方通信大厦 7 楼 501 室',
-        isDefault: true,
-    },
-    {
-        id: '2',
-        name: '李四',
-        tel: '1310000000',
-        address: '浙江省杭州市拱墅区莫干山路 50 号',
-    },
-];
+const chosenAddressId = ref('2');
+const list = ref();
 const disabledList = [
     {
         id: '3',
@@ -229,9 +246,53 @@ const disabledList = [
     },
 ];
 
-const onAdd = () => console.log('新增地址');
-const onEdit = (item: any, index: any) => console.log('编辑地址:' + index);
+const checkedAddressCode = ref()
 
+const deliverTo = ref("北京朝阳区三环到四环之间")
+const bringAddress = (item: any) => {
+    // console.log("item=>", item.address);
+    deliverTo.value = item.address
+    // console.log(deliverTo.value);
+    showAddr.value = false
+
+}
+
+const onAdd = () => {
+    showAddressSelect.value = true
+}
+const onEdit = (index: any) => console.log('编辑地址:' + index);
+
+// 添加地址
+const addAddress = (selectedValues: any) => {
+    const name = selectedValues.selectedOptions.map((item: any) => item.text)
+    addressBook.addAddress.call({
+        user_id: sessionStorage.getItem("userId"),
+        consignee: sessionStorage.getItem("username"),
+        tel: sessionStorage.getItem("tel"),
+        province_name: name[0],
+        city_name: name[1],
+        district_name: name[2],
+        detail: '',
+        is_default: 0
+    }).then((res) => {
+        console.log("res=>", res);
+        getAddress()
+    })
+    showAddressSelect.value = false
+}
+
+// 获取地址
+const getAddress = () => {
+    const userId = sessionStorage.getItem("userId")
+    // console.log("userId=>", userId);
+    addressBook.selectAddressBooks.call({
+        userId: userId
+    }).then((res) => {
+        // console.log("res=>", res);
+        list.value = res.data
+    })
+};
+getAddress()
 
 </script>
 

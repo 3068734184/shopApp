@@ -12,20 +12,17 @@
       </div>
     </div>
 
-    <!-- 地址 -->
-    <div v-if="!emptyCart" class="goods-list">
-      <van-contact-card type="edit" name="张三" tel="13000000000" :editable="false" />
-    </div>
 
     <!-- 商品列表 -->
     <van-checkbox-group v-model="checkedResult" @change="checkedResultChange">
-      <van-checkbox v-for="(item, index) in cartList" :key="index" :name="item.id" label-disabled>
-        <van-card :title="item.name" :thumb="item.img" :price="item.price">
+      <van-checkbox v-for="(item, index) in cartItems" :key="index" :name="item.id" label-disabled>
+        <van-card :title="item.name" :thumb="item.img" :price="item.amount">
           <template #tags>
             <van-tag plain type="primary">{{ item.brief }}</van-tag>
           </template>
           <template #footer>
-            <van-stepper v-model="item.quantity" theme="round" button-size="22" disable-input @change="updatePrice" />
+            <van-stepper v-model="item.number" theme="round" button-size="22" disable-input
+              @change="updateAmount(item)" />
           </template>
         </van-card>
       </van-checkbox>
@@ -33,7 +30,7 @@
 
 
     <!-- 底部结算 -->
-    <van-submit-bar :disabled="isSubmitDisabled" :price="totalPrice" button-text="去结算" @submit="onSubmit">
+    <van-submit-bar v-if="!emptyCart" :disabled="isSubmitDisabled" :price="totalPrice" button-text="去结算" @submit="onSubmit">
       <van-checkbox v-model="isCheckAll" :indeterminate="isIndeterminate" @change="checkAllChange">全选</van-checkbox>
       <template #tip>
         你的收货地址不支持配送, <span @click="onClickLink">修改地址</span>
@@ -44,16 +41,16 @@
 
 <script setup lang='ts'>
 import { showToast } from 'vant';
-import { ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCartStore } from "../../store";
-
-const store = useCartStore();
+import { useCartStore } from "../../store/cart";
+import { useOrderStore } from '../../store/order';
+import { shoppingCart } from '../../api';
 
 // 返回键
 const router = useRouter()
 const onClickLeft = () => {
-  router.push({ path: "/moveshow/index" })
+  router.go(-1)
 }
 
 // 购物车是否为空
@@ -64,39 +61,58 @@ interface CartItem {
   id: number;
   name: string;
   img: string;
-  price: number;
-  quantity: number;
+  amount: number;
+  unit_price: number;
+  number: number;
   brief: string;
 }
-const cartList = ref<CartItem[]>([
-  {
-    id: 1,
-    name: "XiaoMi SU7",
-    img: "https://p3.dcarimg.com/img/tos-cn-i-dcdx/c8ff20e2c10a4c808bde0e7ce7839a14~1200x0.png",
-    price: 215900,
-    brief: "新能源汽车",
-    quantity: 1
-  },
-  {
-    id: 2,
-    name: "红旗H5",
-    img: "https://p3.dcarimg.com/img/motor-mis-img/2d944260595993d5ff54246d19484cf0~1200x0.png",
-    price: 162800,
-    brief: "中型车",
-    quantity: 1
+const cartList = ref<CartItem[]>([])
+
+onMounted(() => {
+  getCartList()
+  // addShoppingCart()
+
+})
+// 从pinia获取🛒商品信息
+const cartStore = useCartStore()
+
+// 获取购物车🛒列表
+const getCartList = () => {
+  const userId = sessionStorage.getItem("userId")
+  if (userId != null) {
+    shoppingCart.selectByUserId.call({
+      user_id: userId
+    }).then((res) => {
+      // console.log("res=>", res);
+      cartList.value = res.data as CartItem[];
+      cartStore.setItems(cartList.value)
+    })
+  } else {
+    emptyCart.value = true
   }
-])
+}
+
+const cartItems = computed(() => cartStore.items)
+// console.log("cartItems=>", cartItems);
+
 const isCheckAll = ref(false);
 const checkedResult = ref<number[]>([]);
 const isIndeterminate = ref(false);
 const totalPrice = ref(0);
 const isSubmitDisabled = ref(true);
 
+const updateAmount = (item: any) => {
+  item.amount = item.number * item.unit_price;
+
+  updatePrice()
+}
+
 const updatePrice = () => {
-  totalPrice.value = cartList.value.reduce((total, item) => {
-    return (total + (checkedResult.value.includes(item.id) ? item.price * item.quantity : 0)) * 10;
+  totalPrice.value = checkedResult.value.reduce((total, id) => {
+    const item = cartItems.value.find(item => item.id === id);
+    return (total + (item ? item.amount : 0));
   }, 0);
-  // console.log("totalPrice=>", totalPrice.value*100);
+  totalPrice.value = totalPrice.value * 100
 
   isSubmitDisabled.value = checkedResult.value.length === 0;
 };
@@ -112,14 +128,16 @@ const checkedResultChange = () => {
   isCheckAll.value = checkedResult.value.length === cartList.value.length;
 };
 
-watch(cartList, updatePrice, { deep: true });
+watch(cartItems, updatePrice, { deep: true });
 updatePrice();
 
 // 底部按钮
+const orderStore = useOrderStore()
 const onSubmit = () => {
   const selectedItems = cartList.value.filter(item => checkedResult.value.includes(item.id));
-  store.setCartItems(selectedItems);
-  router.push({ path: "/moveshow/orderDetail" });
+  orderStore.setItems(selectedItems)
+  // console.log("...orderStore.items", orderStore.items);
+  router.push({ path: "/moveshow/orderConfirm" });
 }
 const onClickLink = () => showToast('修改地址');
 </script>
@@ -127,6 +145,7 @@ const onClickLink = () => showToast('修改地址');
 <style scoped>
 .empty-cart {
   background-color: #f2f2f2;
+  height: calc(100vh - 50px);
 }
 
 .shopcart-empty-wrap {
@@ -205,5 +224,9 @@ const onClickLink = () => showToast('修改地址');
 
 :global(.van-checkbox__icon) {
   margin-left: 10px;
+}
+
+:global(.van-submit-bar) {
+  bottom: 50px !important;
 }
 </style>

@@ -10,7 +10,8 @@ import ElementPlus from 'element-plus'
 //4引入路由配置
 import router from './router'
 // 5.引入pinia状态管理工具
-import pinia from './store';
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 //国际化标准
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
@@ -18,6 +19,9 @@ import 'element-plus/dist/index.css'
 
 // 如果您正在使用CDN引入，请删除下面一行。
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

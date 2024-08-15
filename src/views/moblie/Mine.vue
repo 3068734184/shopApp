@@ -8,7 +8,7 @@
     <div class="conent-linear">
       <div class="header">
         <div class="user-info">
-          <div class="avatar-wrap">
+          <div class="avatar-wrap" @click="toLogin">
             <div class="avatar">
               <div class="avatar-image">
                 <img style="    min-width: 1px; min-height: 1px; border-radius: 50%; width: 100%; height: auto;"
@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang='ts'>
+import { showNotify } from 'vant';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -46,6 +47,16 @@ const onClickLeft = () => {
 }
 
 const username = ref('京东用户')
+
+const toLogin = () => {
+  if (sessionStorage.getItem("userId") == null) {
+    router.push({ path: "/moveshow/login" })
+  } else {
+    const username = sessionStorage.getItem("username")
+    showNotify({ type: 'success', message: '用户 ' + username + ' 已登录' });
+
+  }
+}
 
 onMounted(() => {
   const getUsername = sessionStorage.getItem('username')
@@ -58,6 +69,7 @@ onMounted(() => {
 <style scoped>
 .conent-linear {
   background: url(https://img12.360buyimg.com/img/s750x432_jfs/t1/84804/29/26776/112106/624d07d0E55603649/07ed8923a7bdbad2.png) no-repeat scroll 0 0 / 100% auto;
+  height: 210px;
 }
 
 .header {

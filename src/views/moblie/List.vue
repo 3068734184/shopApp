@@ -19,7 +19,7 @@
             <a v-for="(item,index) in listData" :key="index" :href="`/moveshow/goodsDetail/${item.id}`">
                 <van-card :title="item.name" :thumb="item.img">
                     <template #price>
-                        ￥{{ item.price }}万
+                        ￥{{ item.price }}.00
                     </template>
                     <template #tags>
                         <van-tag plain type="primary">{{ item.brief }}</van-tag>
