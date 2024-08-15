@@ -17,7 +17,7 @@ public class AddressBookController {
     }
 
     @PostMapping("/addAddress")
-    public int insertAddressBook(AddressBook addressBook) {
+    public int insertAddressBook(@RequestBody AddressBook addressBook) {
         return addressBookService.insertAddressBook(addressBook);
     }
 

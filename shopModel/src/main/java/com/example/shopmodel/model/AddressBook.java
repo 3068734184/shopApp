@@ -13,5 +13,5 @@ public class AddressBook {
     private String district_name;
     private String detail;
     private String label;
-    private String is_default;
+    private boolean is_default;
 }
